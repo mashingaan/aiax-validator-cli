@@ -1,0 +1,16 @@
+{
+  "source_commit": "d6bebe40d7aeda29c48b1b2909001717513bb116",
+  "checked_at": "2026-10-26T12:00:39.136Z",
+  "schemas": [
+    {
+      "name": "manifest",
+      "url": "https://raw.githubusercontent.com/Godman-s/aiax/d6bebe40d7aeda29c48b1b2909001717513bb116/schemas/manifest.schema.json",
+      "sha256": "986fff73f653abb6f9beeb649cb2b669df0eb37d87324090f94f018c30ce3051"
+    },
+    {
+      "name": "section",
+      "url": "https://raw.githubusercontent.com/Godman-s/aiax/d6bebe40d7aeda29c48b1b2909001717513bb116/schemas/section.schema.json",
+      "sha256": "4114c19b6b359d4afaa2c20023994f9594cc3da8c485ed2d18027ab54716ce8d"
+    }
+  ]
+}

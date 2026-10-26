@@ -1,0 +1,760 @@
+{
+  "checked_at": "2026-10-26T11:50:41.169Z",
+  "manifest_url": "https://www.kognai.ai/.well-known/aiax.json",
+  "manifest": {
+    "aiax_version": "0.1",
+    "product": {
+      "name": "Kognai agents",
+      "one_line_purpose": "Agent work paid per call over x402: Kreativ images and videos, Golden Kog token risk facts.",
+      "domain": "agent-services"
+    },
+    "entry_points": [
+      {
+        "id": "kreativ_image",
+        "url": "/aiax/sections/kreativ_image.json",
+        "purpose": "Kreativ image",
+        "est_tokens": 888
+      },
+      {
+        "id": "kreativ_video",
+        "url": "/aiax/sections/kreativ_video.json",
+        "purpose": "Kreativ 8 second video",
+        "est_tokens": 897
+      },
+      {
+        "id": "golden_kog_analysis",
+        "url": "/aiax/sections/golden_kog_analysis.json",
+        "purpose": "Golden Kog token risk analysis",
+        "est_tokens": 1098
+      },
+      {
+        "id": "golden_kog_monitor",
+        "url": "/aiax/sections/golden_kog_monitor.json",
+        "purpose": "Golden Kog 24 hour token watch",
+        "est_tokens": 1146
+      },
+      {
+        "id": "trust",
+        "url": "/aiax/sections/trust.json",
+        "purpose": "Facts not advice, pay on delivery, receipts.",
+        "est_tokens": 455
+      },
+      {
+        "id": "book_of_boundaries",
+        "url": "/aiax/sections/book_of_boundaries.json",
+        "purpose": "The Book of Boundaries (architecture reference)",
+        "est_tokens": 395
+      }
+    ],
+    "pricing_summary": "USDC per call, x402 on Base or Solana, fee included: image 0.18, video 0.765, analysis 0.50, monitor 1.00.",
+    "trust_signals": {},
+    "mcp_endpoint": "https://www.kognai.ai/v1/golden-kog/mcp",
+    "updated_at": "2026-10-14T22:20:55Z",
+    "llms_txt_url": "https://www.kognai.ai/llms.txt",
+    "openapi_url": "https://www.kognai.ai/openapi.json"
+  },
+  "sections": [
+    {
+      "url": "https://www.kognai.ai/aiax/sections/kreativ_image.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "kreativ_image",
+        "purpose": "Kognai Kreativ image agent: one original image made from your text prompt (square, portrait or landscape) and checked by a quality reviewer before delivery. Use it when an agent needs an illustration, a product visual or a social post picture. Answers with a result link; on Base the payment is collected only on delivery.",
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 600,
+              "description": "what the image should show"
+            },
+            "aspect": {
+              "type": "string",
+              "enum": [
+                "1:1",
+                "9:16",
+                "16:9"
+              ],
+              "default": "1:1",
+              "description": "the frame: square, portrait or landscape"
+            }
+          },
+          "required": [
+            "prompt"
+          ]
+        },
+        "outputs": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "description": "done when the result is ready"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "status_url": {
+              "type": "string",
+              "description": "poll this while the state is not done"
+            },
+            "result_url": {
+              "type": "string",
+              "description": "the image file, once the state is done"
+            },
+            "review_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "the quality reviewer score out of 10"
+            }
+          },
+          "required": [
+            "id",
+            "state"
+          ]
+        },
+        "pricing": {
+          "model": "per_call",
+          "amount": "0.18",
+          "currency": "USDC",
+          "rail": "x402"
+        },
+        "examples": [
+          {
+            "description": "Unpaid call: HTTP 402 with the x402 terms (PAYMENT-REQUIRED header and body).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/labor/x402/image",
+              "body": {
+                "prompt": "a lighthouse at dawn over a calm sea, cinematic light",
+                "aspect": "1:1"
+              }
+            },
+            "response": {
+              "status": 402,
+              "x402Version": 2,
+              "amount_atomic": "180000",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ]
+            }
+          },
+          {
+            "description": "Same call with the signed payment (PAYMENT-SIGNATURE header).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/labor/x402/image",
+              "body": {
+                "prompt": "a lighthouse at dawn over a calm sea, cinematic light",
+                "aspect": "1:1"
+              },
+              "headers": {
+                "PAYMENT-SIGNATURE": "<base64 x402 payment>"
+              }
+            },
+            "response": {
+              "id": "lo_example",
+              "state": "done",
+              "kind": "image",
+              "status_url": "https://www.kognai.ai/v1/labor/orders/lo_example",
+              "result_url": "https://www.kognai.ai/v1/labor/orders/lo_example/result?t=view_token",
+              "review_score": 8.5,
+              "paid_usd": "0.18",
+              "network": "base",
+              "transaction": "0x..."
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "openapi_operation_id": "kreativ_image",
+        "extensions": {
+          "x-kognai": {
+            "endpoint": "https://www.kognai.ai/v1/labor/x402/image",
+            "method": "POST",
+            "x402": {
+              "version": 2,
+              "scheme": "exact",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ],
+              "amount_atomic": "180000",
+              "price_usd": "0.18",
+              "fee_included": true
+            },
+            "settlement": "Base: verified at once, collected only on delivery after the quality review. Solana: settled up front; a failed job leaves a recorded refund owed."
+          }
+        }
+      }
+    },
+    {
+      "url": "https://www.kognai.ai/aiax/sections/kreativ_video.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "kreativ_video",
+        "purpose": "Kognai Kreativ video agent: one 8 second video (2 shots, 480p, no audio) made from your text prompt and checked by a quality reviewer before delivery. Use it when an agent needs a short clip for a social post or a teaser. Rendering takes minutes: the answer is a status link and a result link; on Base the payment is collected only on delivery.",
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 600,
+              "description": "what the video should show"
+            },
+            "aspect": {
+              "type": "string",
+              "enum": [
+                "1:1",
+                "9:16",
+                "16:9"
+              ],
+              "default": "1:1",
+              "description": "the frame: square, portrait or landscape"
+            }
+          },
+          "required": [
+            "prompt"
+          ]
+        },
+        "outputs": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "description": "done when the result is ready"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "status_url": {
+              "type": "string",
+              "description": "poll this while the state is not done"
+            },
+            "result_url": {
+              "type": "string",
+              "description": "the video file, once the state is done"
+            },
+            "review_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "the quality reviewer score out of 10"
+            }
+          },
+          "required": [
+            "id",
+            "state"
+          ]
+        },
+        "pricing": {
+          "model": "per_call",
+          "amount": "0.765",
+          "currency": "USDC",
+          "rail": "x402"
+        },
+        "examples": [
+          {
+            "description": "Unpaid call: HTTP 402 with the x402 terms (PAYMENT-REQUIRED header and body).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/labor/x402/video",
+              "body": {
+                "prompt": "a lighthouse at dawn over a calm sea, cinematic light",
+                "aspect": "1:1"
+              }
+            },
+            "response": {
+              "status": 402,
+              "x402Version": 2,
+              "amount_atomic": "765000",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ]
+            }
+          },
+          {
+            "description": "Same call with the signed payment (PAYMENT-SIGNATURE header).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/labor/x402/video",
+              "body": {
+                "prompt": "a lighthouse at dawn over a calm sea, cinematic light",
+                "aspect": "1:1"
+              },
+              "headers": {
+                "PAYMENT-SIGNATURE": "<base64 x402 payment>"
+              }
+            },
+            "response": {
+              "id": "lo_example",
+              "state": "done",
+              "kind": "video",
+              "status_url": "https://www.kognai.ai/v1/labor/orders/lo_example",
+              "result_url": "https://www.kognai.ai/v1/labor/orders/lo_example/result?t=view_token",
+              "review_score": 8.5,
+              "paid_usd": "0.765",
+              "network": "base",
+              "transaction": "0x..."
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "openapi_operation_id": "kreativ_video",
+        "extensions": {
+          "x-kognai": {
+            "endpoint": "https://www.kognai.ai/v1/labor/x402/video",
+            "method": "POST",
+            "x402": {
+              "version": 2,
+              "scheme": "exact",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ],
+              "amount_atomic": "765000",
+              "price_usd": "0.765",
+              "fee_included": true
+            },
+            "settlement": "Base: verified at once, collected only on delivery after the quality review. Solana: settled up front; a failed job leaves a recorded refund owed."
+          }
+        }
+      }
+    },
+    {
+      "url": "https://www.kognai.ai/aiax/sections/golden_kog_analysis.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "golden_kog_analysis",
+        "purpose": "Golden Kog token risk analysis by Kognai: one Solana or Base token read on chain for structure and risk (holder concentration, launch bundles and the dev wallet, liquidity, mint and freeze authorities, taxes and honeypot checks on Base, issuer controls, trading momentum), with a risk level, its flags and a short report. Use it before an agent or a trader touches an unfamiliar token. Risk reading only, never a buy or sell signal.",
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "chain": {
+              "type": "string",
+              "enum": [
+                "solana",
+                "base"
+              ],
+              "default": "solana",
+              "description": "the chain of the token"
+            },
+            "token": {
+              "type": "string",
+              "description": "the token address: a Solana mint, or a Base contract (0x and 40 hex)"
+            },
+            "client_order": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{22,64}$",
+              "description": "optional: your own order id (128 random bits or more); with it the reply comes as soon as the payment is verified and GET order_url reads the result"
+            },
+            "wait_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "optional: how long to hold the call open for the result, in seconds"
+            }
+          },
+          "required": [
+            "chain",
+            "token"
+          ]
+        },
+        "outputs": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "description": "done (watching for a watch) when the report is ready; otherwise poll status_url"
+            },
+            "status_url": {
+              "type": "string"
+            },
+            "report": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "level (low, medium, high, severe or issuer), flags, unknown facts and the written text"
+            }
+          },
+          "required": [
+            "id",
+            "state"
+          ]
+        },
+        "pricing": {
+          "model": "per_call",
+          "amount": "0.50",
+          "currency": "USDC",
+          "rail": "x402"
+        },
+        "examples": [
+          {
+            "description": "Unpaid call: HTTP 402 with the x402 terms (PAYMENT-REQUIRED header and body).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/golden-kog/analysis",
+              "body": {
+                "chain": "solana",
+                "token": "<solana mint>"
+              }
+            },
+            "response": {
+              "status": 402,
+              "x402Version": 2,
+              "amount_atomic": "500000",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ]
+            }
+          },
+          {
+            "description": "Same call with the signed payment (PAYMENT-SIGNATURE header).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/golden-kog/analysis",
+              "body": {
+                "chain": "solana",
+                "token": "<solana mint>"
+              },
+              "headers": {
+                "PAYMENT-SIGNATURE": "<base64 x402 payment>"
+              }
+            },
+            "response": {
+              "id": "gk_example",
+              "state": "done",
+              "status_url": "https://www.kognai.ai/v1/golden-kog/jobs/gk_example?t=view_token",
+              "paid_usd": "0.50",
+              "network": "base",
+              "transaction": "0x...",
+              "report": {
+                "chain": "solana",
+                "token": "<solana mint>",
+                "symbol": "BONK",
+                "level": "low",
+                "level_label": "low risk",
+                "points": 1,
+                "flags": [
+                  {
+                    "id": "top10",
+                    "points": 1,
+                    "severe": false,
+                    "evidence": "top 10 holders outside pools hold 24 percent"
+                  }
+                ],
+                "unknown": [],
+                "text": "a short written reading of the facts"
+              }
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "mcp_tool_name": "analyze_token",
+        "openapi_operation_id": "golden_kog_analysis",
+        "extensions": {
+          "x-kognai": {
+            "endpoint": "https://www.kognai.ai/v1/golden-kog/analysis",
+            "method": "POST",
+            "x402": {
+              "version": 2,
+              "scheme": "exact",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ],
+              "amount_atomic": "500000",
+              "price_usd": "0.50",
+              "fee_included": true
+            },
+            "settlement": "Base: verified at once, collected only when the report is delivered. Solana: settled up front; a failed job leaves a recorded refund owed.",
+            "mcp": {
+              "endpoint": "https://www.kognai.ai/v1/golden-kog/mcp",
+              "tool": "analyze_token"
+            }
+          }
+        }
+      }
+    },
+    {
+      "url": "https://www.kognai.ai/aiax/sections/golden_kog_monitor.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "golden_kog_monitor",
+        "purpose": "Golden Kog token watch by Kognai: one Solana or Base token watched for 24 hours after a baseline risk analysis, with alerts when its risk picture changes (liquidity pulled, top holders or the dev wallet selling, authorities or taxes changed), by webhook and on the job page. Use it to keep an eye on a token an agent holds or follows. Risk alerts only, never a buy or sell signal.",
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "chain": {
+              "type": "string",
+              "enum": [
+                "solana",
+                "base"
+              ],
+              "default": "solana",
+              "description": "the chain of the token"
+            },
+            "token": {
+              "type": "string",
+              "description": "the token address: a Solana mint, or a Base contract (0x and 40 hex)"
+            },
+            "client_order": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{22,64}$",
+              "description": "optional: your own order id (128 random bits or more); with it the reply comes as soon as the payment is verified and GET order_url reads the result"
+            },
+            "wait_s": {
+              "type": "number",
+              "minimum": 0,
+              "description": "optional: how long to hold the call open for the result, in seconds"
+            },
+            "hours": {
+              "type": "integer",
+              "enum": [
+                24
+              ],
+              "description": "the window, 24 hours"
+            },
+            "webhook": {
+              "type": "string",
+              "description": "optional: a public https url that receives the alerts"
+            }
+          },
+          "required": [
+            "chain",
+            "token"
+          ]
+        },
+        "outputs": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "description": "done (watching for a watch) when the report is ready; otherwise poll status_url"
+            },
+            "status_url": {
+              "type": "string"
+            },
+            "report": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "level (low, medium, high, severe or issuer), flags, unknown facts and the written text"
+            }
+          },
+          "required": [
+            "id",
+            "state"
+          ]
+        },
+        "pricing": {
+          "model": "per_call",
+          "amount": "1.00",
+          "currency": "USDC",
+          "rail": "x402"
+        },
+        "examples": [
+          {
+            "description": "Unpaid call: HTTP 402 with the x402 terms (PAYMENT-REQUIRED header and body).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/golden-kog/monitor",
+              "body": {
+                "chain": "solana",
+                "token": "<solana mint>",
+                "hours": 24
+              }
+            },
+            "response": {
+              "status": 402,
+              "x402Version": 2,
+              "amount_atomic": "1000000",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ]
+            }
+          },
+          {
+            "description": "Same call with the signed payment (PAYMENT-SIGNATURE header).",
+            "request": {
+              "method": "POST",
+              "url": "https://www.kognai.ai/v1/golden-kog/monitor",
+              "body": {
+                "chain": "solana",
+                "token": "<solana mint>",
+                "hours": 24
+              },
+              "headers": {
+                "PAYMENT-SIGNATURE": "<base64 x402 payment>"
+              }
+            },
+            "response": {
+              "id": "gk_example",
+              "state": "watching",
+              "status_url": "https://www.kognai.ai/v1/golden-kog/jobs/gk_example?t=view_token",
+              "paid_usd": "1.00",
+              "network": "base",
+              "transaction": "0x...",
+              "report": {
+                "chain": "solana",
+                "token": "<solana mint>",
+                "symbol": "BONK",
+                "level": "low",
+                "level_label": "low risk",
+                "points": 1,
+                "flags": [
+                  {
+                    "id": "top10",
+                    "points": 1,
+                    "severe": false,
+                    "evidence": "top 10 holders outside pools hold 24 percent"
+                  }
+                ],
+                "unknown": [],
+                "text": "a short written reading of the facts"
+              }
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "mcp_tool_name": "monitor_token",
+        "openapi_operation_id": "golden_kog_monitor",
+        "extensions": {
+          "x-kognai": {
+            "endpoint": "https://www.kognai.ai/v1/golden-kog/monitor",
+            "method": "POST",
+            "x402": {
+              "version": 2,
+              "scheme": "exact",
+              "asset": "USDC",
+              "networks": [
+                "base",
+                "solana"
+              ],
+              "amount_atomic": "1000000",
+              "price_usd": "1.00",
+              "fee_included": true
+            },
+            "settlement": "Base: verified at once, collected only when the report is delivered. Solana: settled up front; a failed job leaves a recorded refund owed.",
+            "mcp": {
+              "endpoint": "https://www.kognai.ai/v1/golden-kog/mcp",
+              "tool": "monitor_token"
+            }
+          }
+        }
+      }
+    },
+    {
+      "url": "https://www.kognai.ai/aiax/sections/trust.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "trust",
+        "purpose": "What a buyer can rely on before paying a Kognai agent: how payment is collected, what is delivered, what is never claimed.",
+        "inputs": "none: read this document",
+        "outputs": "the trust facts in extensions.x-kognai.facts",
+        "pricing": null,
+        "examples": [
+          {
+            "description": "Read the trust facts.",
+            "request": {
+              "method": "GET",
+              "url": "https://www.kognai.ai/aiax/sections/trust.json"
+            },
+            "response": {
+              "facts": 8
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "extensions": {
+          "x-kognai": {
+            "facts": [
+              "Golden Kog gives facts, not advice: risk and structure read on chain, never a buy or sell signal and never investment advice.",
+              "Pay on delivery on Base: the authorization is verified at once and collected only when the image, video or report is delivered; a failed job is not charged.",
+              "Solana is settled up front (a Solana transaction expires in about a minute); a failed job leaves a recorded refund owed.",
+              "Every Kreativ image and video passes a quality reviewer before delivery.",
+              "No account and no key: the x402 payment is the credential.",
+              "Prices here are the amounts of the live 402 offers, network fee included; a test fails the build when they differ.",
+              "Every settled payment is answered with its transaction hash (the transaction field and the PAYMENT-RESPONSE header) and booked as a receipt.",
+              "Kognai never asks for keys or seed phrases."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "url": "https://www.kognai.ai/aiax/sections/book_of_boundaries.json",
+      "status": 200,
+      "body": {
+        "aiax_version": "0.1",
+        "section_id": "book_of_boundaries",
+        "purpose": "How Kognai agents cross boundaries: contracts, mandates, the Five Laws, payments and review. Doctrine to reason with, not a grant of authority.",
+        "inputs": "none: read the chapter index, then only the chapter you need",
+        "outputs": "links to the chapter index, the book (HTML) and the PDF in extensions.x-kognai.reference",
+        "pricing": {
+          "model": "free",
+          "amount": "0",
+          "currency": "USDC",
+          "rail": "none"
+        },
+        "examples": [
+          {
+            "description": "Read the chapter index.",
+            "request": {
+              "method": "GET",
+              "url": "https://www.kognai.ai/aiax/reference/index.json"
+            },
+            "response": {
+              "chapters": "id, title, anchor"
+            }
+          }
+        ],
+        "pact_mandate_template": null,
+        "extensions": {
+          "x-kognai": {
+            "reference": {
+              "title": "The Book of Boundaries (architecture reference)",
+              "summary": "Public edition 1.1, October 2026: lore, 19 chapters, design rules, 15 invariants, a crossing state machine and a protocol boundary map.",
+              "index": "https://www.kognai.ai/aiax/reference/index.json",
+              "html": "https://www.kognai.ai/aiax/reference/book-of-boundaries",
+              "pdf": "https://www.kognai.ai/aiax/reference/book-of-boundaries/book-of-boundaries.pdf",
+              "authority": "none: the book grants no permission to act"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
