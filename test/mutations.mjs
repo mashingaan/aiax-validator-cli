@@ -10,7 +10,8 @@ const mutants=[
  ['accept every report','src/validator.js','ok:report.errors.length===0','ok:true'],
  ['constant score','src/validator.js','100-10*errors.length-2*warnings.length','100'],
  ['resolve against site','src/validator.js','httpUrl(entry.url,report.manifest_url)','httpUrl(entry.url,site)'],
- ['accept extra fields','src/schema.js','const normalized=errors.filter(error=>','const normalized=errors.filter(error=>error.keyword!==\'additionalProperties\').filter(error=>']
+ ['accept extra fields','src/schema.js','const normalized=errors.filter(error=>','const normalized=errors.filter(error=>error.keyword!==\'additionalProperties\').filter(error=>'],
+ ['phantom entry URL errors','src/validator.js',"entry===null||typeof entry!=='object'||Array.isArray(entry)",'false']
 ]
 for(const [name,file,before,after] of mutants) {
  const dir=mkdtempSync(join(root,'.mutant-'))

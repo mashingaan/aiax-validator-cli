@@ -37,7 +37,7 @@ The CLI prints one JSON report with `--json`, one line per error otherwise, or a
 | A4 | JSON/plain output, fixture-only fetch, usage errors and all three exit codes exercised by spawned CLI processes |
 | A5 | Executable bin, package contents, pinned schemas and five broken fixture directories implemented. Actual npm publication is PENDING for M2 after selection and publisher authorization |
 
-Seven mutation checks deliberately remove manifest/section validation, extra-field rejection, ID matching, score reduction, correct relative URL resolution and failure propagation. The acceptance tests must detect each changed behavior. The CI matrix covers Node 20 and 22 on Linux and Windows. A dedicated A5 publication test is honestly marked todo. Passing these tests is not a claim about unknown hidden tests.
+Eight mutation checks deliberately remove manifest/section validation, extra-field rejection, ID matching, score reduction, correct relative URL resolution, failure propagation and malformed-entry handling. The acceptance tests must detect each changed behavior. Invalid entry objects receive a single entry_points field diagnosis without a second invented missing-URL problem. JSON body timeouts are tested independently of fetch timeouts. The CI matrix covers Node 20 and 22 on Linux and Windows. A dedicated A5 publication test is honestly marked todo. Passing these tests is not a claim about unknown hidden tests.
 
 Broken fixture directories: missing-product, missing-section, invalid-json, bad-pricing and mismatch. Recorded source documents are in fixtures/lax.kognai.ai.json and fixtures/www.kognai.ai.json with source URLs and collection metadata.
 

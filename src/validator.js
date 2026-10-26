@@ -41,6 +41,10 @@ export async function validateSite(url,{fetch:fetcher=globalThis.fetch,timeoutMs
    const entry=entries[index]
    const row={id:typeof entry?.id==='string'?entry.id:'',url:'',ok:false,errors:[]}
    rows[index]=row
+   if(entry===null||typeof entry!=='object'||Array.isArray(entry)) {
+    row.errors.push(...report.errors.filter(error=>error.path===`/entry_points/${index}`))
+    continue
+   }
    try {
     if(typeof entry?.url!=='string') throw new Error()
     row.url=httpUrl(entry.url,report.manifest_url).href

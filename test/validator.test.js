@@ -155,3 +155,26 @@ test('A2 score is bounded and strictly decreases for each error before zero',()=
  assert.equal(scoreReport(Array(100),[]),0)
  assert.ok(scoreReport([],Array(1))<100)
 })
+
+test('A2 malformed entry objects have one field-naming error without phantom URL failures',async()=>{
+ for(const value of [null,false,12,'not an entry',[]]) {
+  const doc=manifest()
+  doc.entry_points=[value]
+  let calls=0
+  const r=await validateSite(site,{fetch:async()=>{calls++
+   return Response.json(doc)}})
+  assert.equal(r.ok,false)
+  assert.equal(calls,1)
+  assert.equal(r.errors.length,1,JSON.stringify(r.errors))
+  assert.equal(r.errors[0].path,'/entry_points/0')
+  assert.ok(r.errors[0].message.includes('entry_points'))
+ }
+})
+test('A3 JSON-body promises are bounded even when fetch itself succeeds',async()=>{
+ const doc=manifest()
+ doc.entry_points=doc.entry_points.slice(0,1)
+ const r=await validateSite(site,{timeoutMs:5,fetch:async target=>new URL(target).pathname==='/.well-known/aiax.json'?Response.json(doc):{ok:true,json:()=>new Promise(()=>{})}})
+ assert.equal(r.ok,false)
+ assert.equal(r.sections.length,1)
+ assert.equal(r.sections[0].errors.length,1)
+})

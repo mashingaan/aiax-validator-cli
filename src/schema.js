@@ -13,7 +13,7 @@ export function validateDocument(kind,document,url) {
  const normalized=errors.filter(error=>!unions.some(parent=>error!==parent&&error.schemaPath.startsWith(parent.schemaPath+'/'))).map(error=>{
   const field=error.params.missingProperty??error.params.additionalProperty
   const path=error.instancePath+(field===undefined?'':'/'+pointer(field))
-  const label=field??(error.instancePath.split('/').pop()||kind)
+  const label=field??(error.instancePath?error.instancePath.slice(1).split('/').join('.'):kind)
   const message=error.keyword==='required'?`${label} is required`:error.keyword==='additionalProperties'?`${label} is not an allowed field`:error.keyword==='type'?`${label} must be ${error.params.type}`:error.keyword==='enum'?`${label} must be one of ${error.params.allowedValues.join(', ')}`:error.keyword==='oneOf'?`${label} must be an object or a string`:`${label} ${error.message}`
   return {url,path,message}
  })
